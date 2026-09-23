@@ -22,9 +22,7 @@ const foods = [
 // 记录选择并打印、上报
 const logChoice = async (stepName, choice) => {
   const record = { step: stepName, choice, time: new Date().toLocaleString() }
-  // 本地调试用，访客自己F12可见
   console.log('【用户选择】', record)
-  // 上报Cloudflare函数
   try {
     await fetch('/api/choice', {
       method: 'POST',
@@ -87,27 +85,27 @@ const reset = () => { choices.value = []; step.value = 'envelope' }
       </div>
     </div>
 
-    <!-- 场景3：选电影 -->
+    <!-- 场景3：选电影（整个卡片可点击） -->
     <div v-else-if="step === 'selectMovie'" class="card">
       <h2>选一部喜欢的电影 🎬</h2>
       <div class="grid-2">
-        <div v-for="m in movies" :key="m.title" class="item-card">
-          <img :src="m.img" :alt="m.title">
+        <div v-for="m in movies" :key="m.title" class="item-card" @click="chooseMovie(m.title)">
+          <img :src="m.img" :alt="m.title" class="item-image">
           <p class="item-title">{{ m.title }}</p>
-          <button class="btn btn-select" @click="chooseMovie(m.title)">就这部</button>
+          <button class="btn btn-select" @click.stop="chooseMovie(m.title)">就这部</button>
         </div>
       </div>
       <button class="btn btn-secondary mt-4" @click="dislikeMovies">不喜欢这些</button>
     </div>
 
-    <!-- 场景4：选餐厅 -->
+    <!-- 场景4：选餐厅（整个卡片可点击） -->
     <div v-else-if="step === 'selectFood'" class="card">
       <h2>那一起去吃个饭吧 🍽️</h2>
       <div class="grid-2">
-        <div v-for="f in foods" :key="f.title" class="item-card">
-          <img :src="f.img" :alt="f.title">
+        <div v-for="f in foods" :key="f.title" class="item-card" @click="chooseFood(f.title)">
+          <img :src="f.img" :alt="f.title" class="item-image">
           <p class="item-title">{{ f.title }}</p>
-          <button class="btn btn-select" @click="chooseFood(f.title)">吃这个</button>
+          <button class="btn btn-select" @click.stop="chooseFood(f.title)">吃这个</button>
         </div>
       </div>
       <button class="btn btn-secondary mt-4" @click="rejectFood">还是不想去</button>
@@ -133,6 +131,9 @@ const reset = () => { choices.value = []; step.value = 'envelope' }
       <p class="subtitle">明天再约一次？</p>
       <button class="btn btn-primary" @click="reset">再试一次</button>
     </div>
+
+    <!-- 右下角免责声明 -->
+    <div class="disclaimer">内容仅供参考 以实际微信交流为准</div>
 
   </div>
 </template>
@@ -240,12 +241,14 @@ h2 { color: #ff4d6d; font-size: 1.8rem; margin-bottom: 20px; }
   flex-direction: column;
   align-items: center;
   padding-bottom: 15px;
+  cursor: pointer;
 }
 .item-card:hover { transform: translateY(-4px); }
 .item-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
+  pointer-events: auto;
 }
 .item-title {
   font-weight: 700;
@@ -361,6 +364,21 @@ h2 { color: #ff4d6d; font-size: 1.8rem; margin-bottom: 20px; }
 }
 .summary-list li:last-child { border-bottom: none; }
 .summary-list strong { color: #ff4d6d; }
+
+/* 右下角免责声明 */
+.disclaimer {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  font-size: 12px;
+  color: #ffffff;
+  opacity: 0.6;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
 
 /* 手机端适配 */
 @media (max-width: 600px) {
