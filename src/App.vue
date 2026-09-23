@@ -20,15 +20,20 @@ const foods = [
 ]
 
 // 记录选择并打印、上报
-const logChoice = (stepName, choice) => {
+const logChoice = async (stepName, choice) => {
   const record = { step: stepName, choice, time: new Date().toLocaleString() }
-  choices.value.push(record)
+  // 本地调试用，访客自己F12可见
   console.log('【用户选择】', record)
-  fetch('/api/choice', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(record)
-  }).catch(() => {})
+  // 上报Cloudflare函数
+  try {
+    await fetch('/api/choice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    })
+  } catch (e) {
+    console.log('上报失败（不影响页面）', e)
+  }
 }
 
 // 信封递送动画
