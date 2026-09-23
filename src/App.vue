@@ -128,7 +128,7 @@ const reset = () => { choices.value = []; step.value = 'envelope' }
     <div v-else-if="step === 'cry'" class="card">
       <div class="big-icon">😢</div>
       <h2>呜呜呜...给个机会嘛</h2>
-      <p class="subtitle">明天再约一次？</p>
+      <p class="subtitle">我的魅力还是不够白</p>
       <button class="btn btn-primary" @click="reset">再试一次</button>
     </div>
 
